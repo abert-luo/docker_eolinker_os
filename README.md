@@ -155,3 +155,20 @@ VOLUME ["/apps"]
 # 执行初始化脚本(启动MySQL、php、nginx、下载eoLinker开源版最新版)
 CMD ["/bin/sh","/root/start.sh"]
 ```
+备注：
+
+1、上述文件启动后，远程连接无法访问。
+
+原因是：容器中数据库用了其他的配置文件，里面包含skip-networking 参数，阻止了远程访问。
+
+可以在start.sh脚本里面修改最后一行指定配置文件：mysqld_safe --defaults-file=/etc/mysql/my.cnf ;
+
+2、启动后，可能没有自动创建eolinker_os数据库，可以参照start.sh里面的命令手动创建
+
+CREATE DATABASE IF NOT EXISTS  eolinker_os CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+3、启动日志中有更新密码失败记录。为更新root@localhost密码失败。可以后续手动修改
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '新密码';
+
+flush privileges;
